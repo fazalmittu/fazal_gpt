@@ -10,7 +10,7 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
-from classes.LanguageModel import LanguageModel
+from encoder_decoder.classes.LanguageModel import LanguageModel
 
 # hyperparameters
 batch_size: int = 32         # we randomly group together training samples in batches and feed those the network rather than sending all examples in at once
@@ -23,6 +23,7 @@ learning_rate: float = 1e-3  # affects how big of a step we take in adjusting th
 eval_iters: int = 200        # how many times we evaluate the model on our validation set
 dropout: float = 0.1         # what percentage of weights we randomly switch off during training
 eval_interval: int = 10      # how often we evaluate loss during training
+
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'  # setting device to gpu if available
 print(device)
@@ -131,8 +132,10 @@ def generate(model: LanguageModel):
 
 if __name__ == "__main__":
     model = train()
-    
     generate(model)
+
+    # python3 -m transformer
+
 
 
 
