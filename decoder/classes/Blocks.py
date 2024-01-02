@@ -6,7 +6,7 @@ from decoder.classes.FeedForward import FeedFoward
 from decoder.classes.MultiHeadAttention import MultiHeadAttention
 
 class Block(nn.Module):
-    """ Transformer block: communication followed by computation """
+    """ Overall decoder block """
 
     def __init__(
         self, 
@@ -16,6 +16,7 @@ class Block(nn.Module):
         dropout: float
     ):
         # n_embd: embedding dimension, n_head: the number of heads we'd like
+        # essentially just the decoder block; first multi_head_attention and then feed forward to add depth to the model
         super().__init__()
         head_size = embedding_dim // n_heads
         self.sa = MultiHeadAttention(n_heads, head_size, embedding_dim, block_size, dropout)

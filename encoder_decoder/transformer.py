@@ -24,7 +24,6 @@ eval_iters: int = 200        # how many times we evaluate the model on our valid
 dropout: float = 0.1         # what percentage of weights we randomly switch off during training
 eval_interval: int = 10      # how often we evaluate loss during training
 
-
 device = 'cuda' if torch.cuda.is_available() else 'cpu'  # setting device to gpu if available
 print(device)
 

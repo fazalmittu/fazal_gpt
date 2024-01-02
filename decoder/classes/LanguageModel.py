@@ -76,7 +76,7 @@ class LanguageModel(nn.Module):
             # have to reshape logits/y so it can go into cross_entropy function
             logits = logits.view(B*T, logits.shape[-1])  # make 2D; get rid of the batch dimension essentially and make all samples in 1 large batch
             y = y.view(B*T)  # basically just flatten the matrix
-            loss = F.cross_entropy(logits, y)
+            loss = F.cross_entropy(logits, y)  # calculate the loss
 
         return logits, loss
     
@@ -87,16 +87,13 @@ class LanguageModel(nn.Module):
     ):
         # x is (B, T) array of indices in the current context
         for _ in range(max_new_tokens):
-            # crop x to the last block_size tokens
-            x_cond = x[:, -self.block_size:]
-            # get the predictions
-            logits, loss = self(x_cond)
-            # focus only on the last time step
-            logits = logits[:, -1, :] # becomes (B, C)
-            # apply softmax to get probabilities
-            probs = F.softmax(logits, dim=-1) # (B, C)
-            # sample from the distribution
-            x_next = torch.multinomial(probs, num_samples=1) # (B, 1)
-            # append sampled index to the running sequence
-            x = torch.cat((x, x_next), dim=1) # (B, T+1)
+            x_cond = x[:, -self.block_size:]   # crop x to the last block_size tokens
+            logits, loss = self(x_cond)        # get the predictions
+            
+            logits = logits[:, -1, :]          # becomes (B, C); focus only on the last time step
+            probs = F.softmax(logits, dim=-1)  # (B, C); apply softmax to get probabilities
+            
+            x_next = torch.multinomial(probs, num_samples=1) # (B, 1); sample from the distribution
+            x = torch.cat((x, x_next), dim=1) # (B, T+1); append sampled index to the running sequence
+            
         return x

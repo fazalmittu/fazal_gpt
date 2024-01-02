@@ -104,7 +104,7 @@ def train():
     print(sum(p.numel() for p in m.parameters())/1e6, 'M parameters')
 
     # create a PyTorch optimizer
-    optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)  # what we use to update the parameters
 
     for iter in range(epochs):
 
@@ -118,21 +118,21 @@ def train():
 
         # evaluate the loss
         logits, loss = model(xb, yb)
-        optimizer.zero_grad(set_to_none=True)
-        loss.backward()
-        optimizer.step()
+        optimizer.zero_grad(set_to_none=True)  # makes it so that each time we want to run backpropagation, we reset the gradients (this is so each pass we can accurately calculate the loss gradients to tweak the parameters)
+        loss.backward()  # this is the step that actually goes back and computes how much each parameter impacted the result and contributed to loss
+        optimizer.step()  # this is the step that actually updates the parameters
 
     return m
 
 def generate(model: LanguageModel):
     # generate from the model
-    context = torch.zeros((1, 1), dtype=torch.long, device=device)
-    print(decode(model.generate(context, max_new_tokens=500)[0].tolist()))
+    context = torch.zeros((1, 1), dtype=torch.long, device=device)  # start off with a start token and let the model generate words until it reaches a stop token
+    print(decode(model.generate(context, max_new_tokens=500)[0].tolist()))  # get a generated output and then decode it into actual characters
 
 if __name__ == "__main__":
-    model = train()
+    model = train()  # train the model
     
-    generate(model)
+    generate(model)  # generate an example output 
 
 
 
